@@ -45,6 +45,27 @@ create_kind_cluster:
 	@kubectl get nodes
 
 ```
+now we can start calling our installations one by one 
+make install_jenkins
 
+Make sure to log into the Jenkins user before installing kind to run the cluster using this user before switching to user jenkins set its password
 
+sudo passwd jenkins # enter the new password of jenkins twice
+
+Also we need to make sure jenkins has sudo privileges and is included in docker group
+
+sudo visudo #go to the last line add
+jenkins ALL=(ALL:ALL) NOPASSWD: ALL
+
+make install_docker
+then ensuring jenkins is added to docker group
+
+sudo usermod -aG docker jenkins
+id jenkins
+
+su - jenkins
+
+make install_kind
+make install_kubectl
+make create_kind_cluster
 
