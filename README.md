@@ -41,7 +41,7 @@ install_kubectl:
 	@sudo snap install kubectl --classic
 
 create_kind_cluster:
-	@kind create cluster --name explorecalifornia-cluster
+	@kind create cluster --name my_cluster
 	@kubectl get nodes
 
 ```
