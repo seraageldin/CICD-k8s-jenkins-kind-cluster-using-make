@@ -7,12 +7,44 @@ Since we will be using Make through out our installation we need to create a mak
 
 sudo vim Makefile
 add inside the file 
+
+```bash
 #!/usr/bin/env make
-.PHONY: install_jenkins
+.PHONY: install_jenkins install_docker install_kind install_kubectl create_kind_cluster
 
 install_jenkins:
-    sudo wget -O /usr/share/keyrings/jenkins-keyring.asc https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
-echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]" https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
-sudo apt update sudo apt install fontconfig openjdk-17-jre -y sudo apt install -y jenkins sudo systemctl start jenkins sudo systemctl status jenkins
+	@sudo wget -O /usr/share/keyrings/jenkins-keyring.asc https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+	@echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/" | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+	@sudo apt update
+	@sudo apt install -y fontconfig openjdk-17-jre
+	@sudo apt install -y jenkins
+	@sudo systemctl start jenkins
+	@sudo systemctl status jenkins
+
+install_docker:
+	@sudo apt update && sudo apt install -y ca-certificates curl
+	@sudo install -m 0755 -d /etc/apt/keyrings
+	@sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+	@sudo chmod a+r /etc/apt/keyrings/docker.asc
+	@echo "deb [arch=$$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $$(. /etc/os-release && echo $${VERSION_CODENAME}) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+	@sudo apt update
+	@sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+	@sudo usermod -aG docker $USER
+	@newgrp docker
+
+install_kind:
+	@curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.22.0/kind-linux-amd64
+	@chmod +x ./kind
+	@sudo mv ./kind /usr/local/bin/kind
+
+install_kubectl:
+	@sudo snap install kubectl --classic
+
+create_kind_cluster:
+	@kind create cluster --name explorecalifornia-cluster
+	@kubectl get nodes
+
+```
+
 
 
